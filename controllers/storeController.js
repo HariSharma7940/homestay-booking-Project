@@ -37,7 +37,9 @@ exports.getBookings = (req, res, next) => {
 
 exports.getFavourites = async (req, res, next) => {
     const userId = req.session.user._id;
+    console.log("USER ID FROM SESSION:", userId);  // ← add this
     const user = await User.findById(userId).populate('favourites');
+    console.log("USER FROM DB:", user);             // ← add this too
     res.render('store/favourite-list', {
         favouriteHomes: user.favourites,
         pageTitle: 'My Favourites',
@@ -51,7 +53,7 @@ exports.postAddToFavourite = async (req, res, next) => {
     const homeId = req.body.id;
     const userId = req.session.user._id;
     const user = await User.findById(userId);
-    if (!user.favourites.includes(homeId)){
+    if (!user.favourites.some(fav => fav.toString() === homeId)){
         user.favourites.push(homeId);
         await user.save();
     }
@@ -62,8 +64,8 @@ exports.postRemoveFromFavourite = async (req, res, next) => {
     const homeId = req.params.homeId;
     const userId = req.session.user._id;
     const user = await User.findById(userId);
-    if (user.favourites.includes(homeId)){
-        user.favourites = user.favourites.filter(fav => fav != homeId);
+    if (user.favourites.some(fav => fav.toString() === homeId)){
+    user.favourites = user.favourites.filter(fav => fav.toString() !== homeId);
         await user.save();
     }
     res.redirect("/favourites")

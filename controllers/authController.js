@@ -139,7 +139,13 @@ exports.postLogin = async (req, res, next) => {
     };
 
     req.session.isLoggedIn = true;
-    req.session.user = user;
+    req.session.user = {
+        _id: user._id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        userType: user.userType
+    };
     await req.session.save();
 
     if (user.userType === 'host') {
