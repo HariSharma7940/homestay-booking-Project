@@ -1,10 +1,12 @@
+
+require('dotenv').config();
 const path = require('path');
 const express = require('express');
 const session = require('express-session');
 const MongoStore = require('connect-mongo').default;
 const { default: mongoose } = require('mongoose');
 const multer = require('multer');
-const DB_PATH = process.env.MONGO_URI || "mongodb+srv://root:Haripaudel01@harisharma.soi2loa.mongodb.net/homestay?retryWrites=true&w=majority";
+const DB_PATH = process.env.MONGO_URI;
 
 const errorsControllers = require("./controllers/errors")
 
