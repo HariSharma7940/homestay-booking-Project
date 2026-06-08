@@ -1,15 +1,16 @@
-<%- include('partials/head') %>
+<%- include('partials/header') %>
 </head>
-<body class="bg-white">
-    <%- include('partials/nav') %>
+<body class="bg-white flex flex-col min-height-screen">
+    <%- include('partials/navigation') %>
 
-    <div class="flex justify-center items-center mt-20">
+    <main class="flex-1 flex justify-center items-center mt-20 mb-20">
         <div class="text-center">
-            <h1 class="text-8xl font-bold text-red-500 mb-4">404</h1>
+            <h1 class="text-8xl font-bold text-teal-600 mb-4">404</h1>
             <p class="text-xl text-gray-700 mb-6">Oops! Page Not Found</p>
-            <a href="/" class="bg-red-500 text-white px-6 py-3 rounded">Go Back Home</a>
+            <a href="/" style="background-color: #0d9488;" class="text-white px-6 py-3 rounded-lg hover:bg-teal-700 transition duration-300 font-semibold text-decoration-none inline-block">Go Back Home</a>
         </div>
-    </div>
+    </main>
 
+    <%- include('partials/footer') %>
 </body>
 </html>

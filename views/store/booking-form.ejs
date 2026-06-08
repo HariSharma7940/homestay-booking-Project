@@ -1,0 +1,107 @@
+<%- include('../partials/header') %>
+</head>
+<body class="bg-gray-100 flex flex-col min-height-screen">
+    <%- include('../partials/navigation') %>
+
+    <main class="flex-1" style="max-width: 600px; margin: 2rem auto; padding: 0 1.5rem; width: 100%; box-sizing: border-box; font-family: sans-serif;">
+
+        <h1 style="text-align: center; color: #0d9488; font-size: 1.6rem; font-weight: 700; margin-bottom: 2rem;">
+            Book <%= home.houseName %>
+        </h1>
+
+        <div style="background: white; border-radius: 14px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); padding: 2rem;">
+
+            <!-- Home Info -->
+            <div style="display: flex; gap: 1rem; align-items: center; margin-bottom: 1.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid #e5e7eb; flex-wrap: wrap;">
+                <img src="<%= home.photo %>" alt="<%= home.houseName %>" style="width: 120px; height: 80px; object-fit: cover; border-radius: 8px;" onerror="this.src='https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=400'"/>
+                <div>
+                    <p style="font-size: 16px; font-weight: 700; color: #1f2937; margin: 0;"><%= home.houseName %></p>
+                    <p style="font-size: 13px; color: #6b7280; margin: 4px 0;">📍 <%= home.location %></p>
+                    <p style="font-size: 14px; font-weight: 700; color: #0d9488; margin: 0;">RS <%= home.price %> / night</p>
+                </div>
+            </div>
+
+            <!-- Booking Form -->
+            <form action="/bookings" method="POST">
+                <input type="hidden" name="homeId" value="<%= home._id %>" />
+                <input type="hidden" name="totalPrice" id="totalPrice" value="0" />
+
+                <!-- Check In -->
+                <div style="margin-bottom: 1rem;">
+                    <label style="font-size: 14px; font-weight: 600; color: #374151; display: block; margin-bottom: 6px;">Check-in Date</label>
+                    <input type="date" name="checkIn" id="checkIn" required
+                        style="width: 100%; padding: 10px 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; box-sizing: border-box; outline-color: #0d9488;" />
+                </div>
+
+                <!-- Check Out -->
+                <div style="margin-bottom: 1rem;">
+                    <label style="font-size: 14px; font-weight: 600; color: #374151; display: block; margin-bottom: 6px;">Check-out Date</label>
+                    <input type="date" name="checkOut" id="checkOut" required
+                        style="width: 100%; padding: 10px 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; box-sizing: border-box; outline-color: #0d9488;" />
+                </div>
+
+                <!-- Guests -->
+                <div style="margin-bottom: 1.5rem;">
+                    <label style="font-size: 14px; font-weight: 600; color: #374151; display: block; margin-bottom: 6px;">Number of Guests (Max: <%= home.guests || 10 %>)</label>
+                    <input type="number" name="guests" id="guests" min="1" max="<%= home.guests || 10 %>" required
+                        style="width: 100%; padding: 10px 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; box-sizing: border-box; outline-color: #0d9488;" />
+                </div>
+
+                <!-- Total Price Display -->
+                <div style="background: #f9fafb; border-radius: 10px; padding: 1.25rem; margin-bottom: 1.5rem; border: 1px solid #f1f5f9;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                        <p style="font-size: 14px; color: #6b7280; margin: 0;">Price per night</p>
+                        <p style="font-size: 14px; color: #1f2937; font-weight: 600; margin: 0;">RS <%= home.price %></p>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                        <p style="font-size: 14px; color: #6b7280; margin: 0;">Number of nights</p>
+                        <p style="font-size: 14px; color: #1f2937; font-weight: 600; margin: 0;" id="nightsDisplay">0</p>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; border-top: 1px solid #e5e7eb; padding-top: 10px; margin-top: 8px;">
+                        <p style="font-size: 15px; font-weight: 700; color: #1f2937; margin: 0;">Total Price</p>
+                        <p style="font-size: 15px; font-weight: 700; color: #0d9488; margin: 0;" id="totalDisplay">RS 0</p>
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" style="width: 100%; background-color: #0d9488; color: white; padding: 12px 0; border: none; border-radius: 8px; font-size: 15px; font-weight: 600; cursor: pointer; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#0f766e'" onmouseout="this.style.backgroundColor='#0d9488'">
+                    Confirm Booking
+                </button>
+            </form>
+
+        </div>
+    </main>
+
+    <!-- Total Price Calculator -->
+    <script>
+        const pricePerNight = <%= home.price %>;
+
+        function calculateTotal() {
+            const checkInVal = document.getElementById('checkIn').value;
+            const checkOutVal = document.getElementById('checkOut').value;
+
+            if (checkInVal && checkOutVal) {
+                const checkIn = new Date(checkInVal);
+                const checkOut = new Date(checkOutVal);
+
+                if (checkOut > checkIn) {
+                    const diffTime = Math.abs(checkOut - checkIn);
+                    const nights = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                    const total = nights * pricePerNight;
+
+                    document.getElementById('nightsDisplay').textContent = nights;
+                    document.getElementById('totalDisplay').textContent = 'RS ' + total;
+                    document.getElementById('totalPrice').value = total;
+                } else {
+                    document.getElementById('nightsDisplay').textContent = '0';
+                    document.getElementById('totalDisplay').textContent = 'RS 0';
+                    document.getElementById('totalPrice').value = '0';
+                }
+            }
+        }
+
+        document.getElementById('checkIn').addEventListener('change', calculateTotal);
+        document.getElementById('checkOut').addEventListener('change', calculateTotal);
+    </script>
+
+    <%- include('../partials/footer') %>

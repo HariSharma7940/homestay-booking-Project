@@ -3,13 +3,15 @@ const User = require("../models/user");
 const bcrypt = require("bcryptjs");
 
 exports.getLogin = (req, res, next) => {
+    const message = req.query.message || null;
     res.render('auth/login', {
-        pageTitle: 'airbnb Home',
+        pageTitle: 'Login - Homestay Booking System',
         currentPage: 'login',
         isLoggedIn: false,
         errors: [],
         oldInput: {email: ""},
         user: {},
+        message: message,
     });
 }
 

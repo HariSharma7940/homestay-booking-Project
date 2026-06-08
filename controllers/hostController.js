@@ -1,108 +1,146 @@
-const Home = require("../models/home");
+const Homestay = require("../models/homestay");
 const fs = require("fs");
 
 exports.getAddHome = (req, res, next) => {
-    res.render('host/edit-home', {
-        pageTitle: 'airbnb Home',
+    res.render('host/add-home', {
+        pageTitle: 'Add Homestay',
         currentPage: 'addHome',
-        editing: false,
-        user: req.session.user
-    })
+        user: req.session.user,
+        isLoggedIn: req.isLoggedIn
+    });
 }
 
 exports.getEditHome = (req, res, next) => {
     const homeId = req.params.homeId;
-    const editing = req.query.editing === 'true';
 
-    Home.findById(homeId).then(home => {
-        if (!home || home.length === 0) {
-            console.log("Home not found for editing.");
+    Homestay.findById(homeId).then(home => {
+        if (!home) {
+            console.log("Homestay not found for editing.");
             return res.redirect("/host/host-home-list");
         }
-        console.log(homeId, editing, home);
         res.render('host/edit-home', {
             home: home,
-            pageTitle: 'Edit your Home',
+            pageTitle: 'Edit Homestay',
             currentPage: 'host-homes',
-            editing: editing,
-            user: req.session.user
-        })
-    })
+            user: req.session.user,
+            isLoggedIn: req.isLoggedIn
+        });
+    }).catch(err => {
+        console.log(err);
+        res.redirect("/host/host-home-list");
+    });
 }
 
 exports.getHostHomes = (req, res, next) => {
-    Home.find().then(registeredHomes => {
+    // Only fetch homestays created by the logged in host
+    Homestay.find({ hostId: req.session.user._id }).then(registeredHomes => {
         res.render('host/host-home-list', {
             registeredHomes: registeredHomes,
-            pageTitle: 'Host Homes List',
+            pageTitle: 'Host Dashboard',
             currentPage: 'host-homes',
-            user: req.session.user
+            user: req.session.user,
+            isLoggedIn: req.isLoggedIn
         });
-    })
+    }).catch(err => {
+        console.log(err);
+        res.redirect("/");
+    });
 }
 
 exports.postAddHome = (req, res, next) => {
-    console.log(req.body);
-    const { houseName, price, location, rating, description  } = req.body;
-    console.log(houseName, price, location, rating, description );
-    console.log*(req.file);
+    const { houseName, price, location, rating, description, guests, bedrooms, bathrooms } = req.body;
+    const amenities = req.body.amenities ? [].concat(req.body.amenities) : [];
 
     if (!req.file){
-        return res.status(422).send("No image provided.")
+        return res.status(422).send("No image provided.");
     }
     const photo = '/' + req.file.path.replace(/\\/g, '/');
 
-
-    const home = new Home({
+    const homestay = new Homestay({
         houseName, 
         price, 
         location, 
         rating, 
         photo, 
-        description 
+        description,
+        guests,
+        bedrooms,
+        bathrooms,
+        amenities,
+        hostId: req.session.user._id // reference to User who is host
     });
-    home.save().then(() => {
-        console.log("Home Saved Successfully.");
-    });
-    res.redirect('/host/host-home-list')
+
+    homestay.save()
+        .then(() => {
+            console.log("Homestay Saved Successfully.");
+            res.redirect('/host/host-home-list');
+        })
+        .catch(err => {
+            console.log(err);
+            res.redirect('/host/add-home');
+        });
 }
 
 exports.postEditHome = (req, res, next) => {
-    const { id, houseName, price, location, rating, description  } = req.body;
-    Home.findById(id).then((home) =>{
+    const { id, houseName, price, location, rating, description, guests, bedrooms, bathrooms } = req.body;
+    const amenities = req.body.amenities ? [].concat(req.body.amenities) : [];
+
+    Homestay.findById(id).then((home) => {
+        if (!home) {
+            return res.redirect('/host/host-home-list');
+        }
+        
         home.houseName = houseName;
         home.price = price;
         home.location = location;
         home.rating = rating;      
         home.description = description;
+        home.guests = guests;
+        home.bedrooms = bedrooms;
+        home.bathrooms = bathrooms;
+        home.amenities = amenities;
 
         if (req.file){
+            // Delete old photo file
             fs.unlink('.' + home.photo, (err) => {
                 if (err) {
                     console.log("Error while deleting file", err);
                 }                
-            })
+            });
             home.photo = '/' + req.file.path.replace(/\\/g, '/');
-
         }
 
-        home.save().then(result => {
-            console.log("Home Updated", result);
-        }).catch(err => {
-            console.log("Error While Updating ", err);
-        });
+        return home.save();
+    })
+    .then(result => {
+        console.log("Homestay Updated");
         res.redirect('/host/host-home-list');
-    }).catch(err => {
-        console.log("Error while finding home ", err);
+    })
+    .catch(err => {
+        console.log("Error While Updating ", err);
+        res.redirect('/host/host-home-list');
     });
 }
 
 exports.postDeleteHome = (req, res, next) => {
     const homeId = req.params.homeId;
-    console.log("Came to delete", homeId)
-    Home.findByIdAndDelete(homeId).then(() => {
-        res.redirect('/host/host-home-list')
-    }).catch(error => {
-        console.log("Error While Deleting ", error)
-    })
+    
+    Homestay.findById(homeId)
+        .then(home => {
+            if (home && home.photo) {
+                fs.unlink('.' + home.photo, (err) => {
+                    if (err) {
+                        console.log("Error deleting photo", err);
+                    }
+                });
+            }
+            return Homestay.findByIdAndDelete(homeId);
+        })
+        .then(() => {
+            res.redirect('/host/host-home-list');
+        })
+        .catch(error => {
+            console.log("Error While Deleting ", error);
+            res.redirect('/host/host-home-list');
+        });
 }

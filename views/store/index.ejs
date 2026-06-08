@@ -1,57 +1,88 @@
-<%- include('../partials/head') %>
+<%- include('../partials/header') %>
 </head>
-<body class="bg-gray-100">
-  <%- include('../partials/nav') %>
+<body class="bg-gray-100 flex flex-col min-height-screen">
+  <%- include('../partials/navigation') %>
 
-  <div style="max-width: 1100px; margin: 2rem auto; padding: 0 1.5rem; font-family: sans-serif;">
-    
-    <h1 style="text-align: center; color: #E24B4A; font-size: 1.6rem; font-weight: 600; margin-bottom: 2rem;">
-      Welcome to Airbnb index page:
-    </h1>
-
-    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1.5rem;">
-      
-      <% registeredHomes.forEach(home => { %>
-      <div style="background: white; border-radius: 14px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.08); transition: transform 0.2s;" 
-           onmouseover="this.style.transform='translateY(-4px)'" 
-           onmouseout="this.style.transform='translateY(0)'">
-        
-        <!-- Image -->
-        <div style="width: 100%; height: 180px; overflow: hidden;">
-         <img src="<%= home.photo %>"
-               alt="<%= home.houseName %>" 
-               style="width: 100%; height: 100%; object-fit: cover;"
-               referrerpolicy="no-referrer"
-               onerror="this.src='https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=400'" />
-        </div>
-
-        <!-- Info -->
-        <div style="padding: 0.85rem 1rem 1rem;">
-          <h3 style="margin: 0 0 4px; font-size: 15px; font-weight: 600; color: #111827;">
-            <%= home.houseName %>
-          </h3>
-          <p style="margin: 0 0 10px; font-size: 13px; color: #6b7280;">
-            <%= home.location %>
-          </p>
-          <div style="display: flex; align-items: center; justify-content: space-between;">
-            <span style="font-size: 15px; font-weight: 600; color: #E24B4A;">
-              RS <%= home.price %> / night
-            </span>
-            <span style="font-size: 13px; color: #374151;">
-              ⭐ <%= home.rating %>
-            </span>
-          </div>
-        </div>
-
-        <button class="bg-gray-300 p-2 rounded w-full mt-2 hover:bg-gray-400 transition duration-300">
-          Book
-        </button>
-
-      </div>
-      <% }) %>
-
-    </div>
+  <!-- Hero Section -->
+  <div style="background: linear-gradient(135deg, #0d9488, #115e59); color: white; padding: 4rem 1.5rem; text-align: center;">
+    <h1 style="font-size: 2.5rem; font-weight: 800; margin: 0 0 1rem;">Find Your Perfect Homestay</h1>
+    <p style="font-size: 1.1rem; max-width: 600px; margin: 0 auto; color: #ccfbf1;">
+      Experience local hospitality, cozy rooms, and authentic stays anywhere you travel.
+    </p>
   </div>
 
-</body>
-</html>
+  <main class="flex-1" style="max-width: 1100px; margin: 2rem auto; padding: 0 1.5rem; width: 100%; box-sizing: border-box;">
+    
+    <h2 style="color: #0f766e; font-size: 1.8rem; font-weight: 700; margin-bottom: 2rem; border-bottom: 2px solid #e2e8f0; padding-bottom: 0.5rem;">
+      Featured Homestays
+    </h2>
+
+    <% if (registeredHomes.length === 0) { %>
+      <div style="text-align: center; background: white; border-radius: 14px; padding: 3rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);">
+        <p style="font-size: 3rem; margin: 0;">🏡</p>
+        <h3 style="font-size: 1.25rem; font-weight: 600; color: #374151; margin: 1rem 0 0.5rem;">No homestays available right now.</h3>
+        <p style="color: #6b7280; margin: 0;">Please check back later or login as a host to list your homestay!</p>
+      </div>
+    <% } else { %>
+      <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 2rem;">
+        
+        <% registeredHomes.forEach(home => { %>
+        <div style="background: white; border-radius: 14px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); transition: transform 0.2s; display: flex; flex-direction: column;" 
+             onmouseover="this.style.transform='translateY(-6px)'" 
+             onmouseout="this.style.transform='translateY(0)'">
+          
+          <!-- Image -->
+          <div style="width: 100%; height: 200px; overflow: hidden; position: relative;">
+            <img src="<%= home.photo %>"
+                 alt="<%= home.houseName %>" 
+                 style="width: 100%; height: 100%; object-fit: cover;"
+                 referrerpolicy="no-referrer"
+                 onerror="this.src='https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=400'" />
+            <div style="position: absolute; top: 0.75rem; right: 0.75rem; background: rgba(255,255,255,0.9); padding: 2px 8px; border-radius: 20px; font-size: 12px; font-weight: 700; color: #0f766e;">
+              ⭐ <%= home.rating %>
+            </div>
+          </div>
+
+          <!-- Info -->
+          <div style="padding: 1.2rem; flex: 1; display: flex; flex-direction: column; justify-content: space-between;">
+            <div>
+              <h3 style="margin: 0 0 6px; font-size: 16px; font-weight: 700; color: #1f2937;">
+                <%= home.houseName %>
+              </h3>
+              <p style="margin: 0 0 12px; font-size: 13px; color: #6b7280; display: flex; align-items: center; gap: 4px;">
+                📍 <%= home.location %>
+              </p>
+            </div>
+            
+            <div>
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; border-top: 1px solid #f1f5f9; padding-top: 0.75rem;">
+                <span style="font-size: 15px; font-weight: 700; color: #0d9488;">
+                  RS <%= home.price %> <span style="font-size: 12px; font-weight: 400; color: #6b7280;">/ night</span>
+                </span>
+                <span style="font-size: 13px; color: #4b5563; font-weight: 500;">
+                  👥 <%= home.guests %> Guest<%= home.guests > 1 ? 's' : '' %>
+                </span>
+              </div>
+
+              <!-- Buttons -->
+              <div style="display: flex; gap: 0.75rem;">
+                <a href="/homes/<%= home._id %>" style="flex: 1; text-align: center; background-color: #0f766e; color: white; padding: 10px 0; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 13px; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#115e59'" onmouseout="this.style.backgroundColor='#0f766e'">
+                  Details
+                </a>
+                <% if (!isLoggedIn || (user && user.userType === 'guest')) { %>
+                <a href="/homes/<%= home._id %>/book" style="flex: 1; text-align: center; background-color: #0d9488; color: white; padding: 10px 0; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 13px; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#0f766e'" onmouseout="this.style.backgroundColor='#0d9488'">
+                  Book Now
+                </a>
+                <% } %>
+              </div>
+            </div>
+          </div>
+
+        </div>
+        <% }) %>
+
+      </div>
+    <% } %>
+  </main>
+
+  <%- include('../partials/footer') %>

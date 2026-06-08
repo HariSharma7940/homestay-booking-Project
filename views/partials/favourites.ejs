@@ -1,4 +1,6 @@
-<form action="/favourites" method="POST">
-    <button type = "submit" class="bg-gray-300 p-2 hover:bg-green-500">Add to favourites</button>
+<form action="/favourites" method="POST" style="margin: 0; width: 100%;">
     <input type="hidden" name="id" value="<%= home._id %>">
+    <button type="submit" style="width: 100%; background-color: #f0fdfa; border: 1.5px solid #0d9488; color: #0d9488; padding: 8px 0; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.backgroundColor='#ccfbf1'" onmouseout="this.style.backgroundColor='#f0fdfa'">
+        ❤️ Favourite
+    </button>
 </form>

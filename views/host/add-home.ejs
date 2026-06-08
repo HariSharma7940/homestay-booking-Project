@@ -5,20 +5,18 @@
     
     <main class="flex-1 flex justify-center mt-10 mb-10">
         <div class="bg-white p-10 rounded-xl shadow-lg" style="width: 100%; max-width: 480px;">
-            <h1 class="text-2xl font-bold text-center mb-1 text-teal-800">Edit Your Homestay</h1>
-            <p class="text-center text-gray-500 text-sm mb-6">Modify details of <%= home.houseName %></p>
+            <h1 class="text-2xl font-bold text-center mb-1 text-teal-800">Register Your Homestay</h1>
+            <p class="text-center text-gray-500 text-sm mb-6">List details for guests to discover your home</p>
             <hr class="mb-6 border-gray-200"/>
 
-            <form action="/host/edit-home" method="POST" enctype="multipart/form-data">
-                <input type="hidden" name="id" value="<%= home._id %>">
-
+            <form action="/host/add-home" method="POST" enctype="multipart/form-data">
+                
                 <div class="mb-4">
                     <label class="text-sm font-semibold text-gray-700 mb-1 block">Homestay Name</label>
                     <input 
                         type="text" 
                         name="houseName" 
-                        value="<%= home.houseName %>" 
-                        placeholder="Enter House Name" 
+                        placeholder="e.g. Cozy Lakeview Cottage" 
                         class="w-full border border-gray-300 p-2.5 rounded-lg bg-teal-50/20 focus:border-teal-500 outline-none"
                         required/>
                 </div>
@@ -28,8 +26,7 @@
                     <input 
                         type="number" 
                         name="price" 
-                        value="<%= home.price %>" 
-                        placeholder="Price per Night" 
+                        placeholder="e.g. 1500" 
                         class="w-full border border-gray-300 p-2.5 rounded-lg bg-teal-50/20 focus:border-teal-500 outline-none"
                         required/>
                 </div>
@@ -39,31 +36,27 @@
                     <input 
                         type="text" 
                         name="location" 
-                        value="<%= home.location %>" 
-                        placeholder="Enter Location" 
+                        placeholder="e.g. Pokhara, Nepal" 
                         class="w-full border border-gray-300 p-2.5 rounded-lg bg-teal-50/20 focus:border-teal-500 outline-none"
                         required/>
                 </div>
 
                 <div class="mb-4">
-                    <label class="text-sm font-semibold text-gray-700 mb-1 block">Photo (Leave empty to keep existing)</label>
+                    <label class="text-sm font-semibold text-gray-700 mb-1 block">Photo (Image File)</label>
                     <input 
                         type="file" 
                         name="photo" 
                         accept="image/jpg, image/jpeg, image/png"
-                        class="w-full border border-gray-300 p-2 rounded-lg bg-teal-50/20 focus:border-teal-500 outline-none"/>
-                    <% if (home.photo) { %>
-                        <p class="text-xs text-gray-500 mt-1">Current image path: <%= home.photo %></p>
-                    <% } %>
+                        class="w-full border border-gray-300 p-2 rounded-lg bg-teal-50/20 focus:border-teal-500 outline-none"
+                        required/>
                 </div>
 
                 <div class="mb-4">
-                    <label class="text-sm font-semibold text-gray-700 mb-1 block">Rating (1-5)</label>
+                    <label class="text-sm font-semibold text-gray-700 mb-1 block">Initial Rating (1-5)</label>
                     <input 
                         type="number" 
                         name="rating" 
-                        value="<%= home.rating %>" 
-                        placeholder="Enter Rating (1-5)" 
+                        placeholder="e.g. 5" 
                         class="w-full border border-gray-300 p-2.5 rounded-lg bg-teal-50/20 focus:border-teal-500 outline-none" 
                         min="1" max="5"
                         required/>
@@ -74,8 +67,7 @@
                     <input 
                         type="number" 
                         name="guests" 
-                        value="<%= home.guests %>" 
-                        placeholder="Max Guests allowed" 
+                        placeholder="e.g. 4" 
                         class="w-full border border-gray-300 p-2.5 rounded-lg bg-teal-50/20 focus:border-teal-500 outline-none" 
                         min="1"
                         required/>
@@ -86,8 +78,7 @@
                     <input 
                         type="number" 
                         name="bedrooms" 
-                        value="<%= home.bedrooms %>" 
-                        placeholder="Number of Bedrooms" 
+                        placeholder="e.g. 2" 
                         class="w-full border border-gray-300 p-2.5 rounded-lg bg-teal-50/20 focus:border-teal-500 outline-none" 
                         min="1"
                         required/>
@@ -98,8 +89,7 @@
                     <input 
                         type="number" 
                         name="bathrooms" 
-                        value="<%= home.bathrooms %>" 
-                        placeholder="Number of Bathrooms" 
+                        placeholder="e.g. 1" 
                         class="w-full border border-gray-300 p-2.5 rounded-lg bg-teal-50/20 focus:border-teal-500 outline-none" 
                         min="1"
                         required/>
@@ -109,22 +99,22 @@
                     <p class="text-sm font-semibold text-gray-700 mb-2">Amenities</p>
                     <div class="grid grid-cols-2 gap-2">
                         <label class="flex items-center gap-2 text-sm cursor-pointer">
-                            <input type="checkbox" name="amenities" value="Wifi" <%= home.amenities && home.amenities.includes('Wifi') ? 'checked' : '' %> class="accent-teal-600"/> 🛜 Wifi
+                            <input type="checkbox" name="amenities" value="Wifi" class="accent-teal-600"/> 🛜 Wifi
                         </label>
                         <label class="flex items-center gap-2 text-sm cursor-pointer">
-                            <input type="checkbox" name="amenities" value="Parking" <%= home.amenities && home.amenities.includes('Parking') ? 'checked' : '' %> class="accent-teal-600"/> 🅿️ Parking
+                            <input type="checkbox" name="amenities" value="Parking" class="accent-teal-600"/> 🅿️ Parking
                         </label>
                         <label class="flex items-center gap-2 text-sm cursor-pointer">
-                            <input type="checkbox" name="amenities" value="Kitchen" <%= home.amenities && home.amenities.includes('Kitchen') ? 'checked' : '' %> class="accent-teal-600"/> 🍳 Kitchen
+                            <input type="checkbox" name="amenities" value="Kitchen" class="accent-teal-600"/> 🍳 Kitchen
                         </label>
                         <label class="flex items-center gap-2 text-sm cursor-pointer">
-                            <input type="checkbox" name="amenities" value="AC" <%= home.amenities && home.amenities.includes('AC') ? 'checked' : '' %> class="accent-teal-600"/> ❄️ AC
+                            <input type="checkbox" name="amenities" value="AC" class="accent-teal-600"/> ❄️ AC
                         </label>
                         <label class="flex items-center gap-2 text-sm cursor-pointer">
-                            <input type="checkbox" name="amenities" value="Pool" <%= home.amenities && home.amenities.includes('Pool') ? 'checked' : '' %> class="accent-teal-600"/> 🏊 Pool
+                            <input type="checkbox" name="amenities" value="Pool" class="accent-teal-600"/> 🏊 Pool
                         </label>
                         <label class="flex items-center gap-2 text-sm cursor-pointer">
-                            <input type="checkbox" name="amenities" value="Washing Machine" <%= home.amenities && home.amenities.includes('Washing Machine') ? 'checked' : '' %> class="accent-teal-600"/> 🫧 Washing Machine
+                            <input type="checkbox" name="amenities" value="Washing Machine" class="accent-teal-600"/> 🫧 Washing Machine
                         </label>
                     </div>
                 </div>
@@ -133,14 +123,14 @@
                     <label class="text-sm font-semibold text-gray-700 mb-1 block">Description</label>
                     <textarea 
                         name="description" 
-                        placeholder="Describe your Home" 
+                        placeholder="Describe your cozy homestay details, surrounding activities, etc." 
                         class="w-full border border-gray-300 p-2.5 rounded-lg bg-teal-50/20 focus:border-teal-500 outline-none" 
                         rows="4"
-                        required><%= home.description %></textarea>
+                        required></textarea>
                 </div>
 
                 <button type="submit" style="background-color: #0d9488;" class="w-full text-white p-3 rounded-lg cursor-pointer hover:bg-teal-700 transition duration-300 font-semibold text-lg">
-                    Update Homestay
+                    Add Homestay
                 </button>
             </form>
         </div>

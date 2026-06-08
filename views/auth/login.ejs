@@ -1,21 +1,33 @@
-<%- include('../partials/head') %>
+<%- include('../partials/header') %>
 </head>
-<body class="bg-gray-100">
-    <%- include('../partials/nav') %>
-    <div class="flex justify-center mt-10">
+<body class="bg-gray-100 flex flex-col min-height-screen">
+    <%- include('../partials/navigation') %>
+    
+    <main class="flex-1 flex justify-center items-center mt-10 mb-10">
         <div class="bg-white p-10 rounded-xl shadow-lg" style="width: 100%; max-width: 440px;">
-            <h1 class="text-3xl font-bold text-center mb-1">Welcome Back</h1>
-            <p class="text-center text-gray-500 text-sm mb-4">Login to your Airbnb account</p>
+            <h1 class="text-3xl font-bold text-center mb-1 text-teal-800">Welcome Back</h1>
+            <p class="text-center text-gray-500 text-sm mb-4">Login to your Homestay account</p>
             <hr class="mb-6 border-gray-200"/>
 
             <form action="/login" method="POST">
+                <% if (message === 'booking') { %>
+                    <div style="background-color: #fff3cd; border: 1px solid #ffc107; color: #856404; padding: 10px 14px; border-radius: 8px; font-size: 14px; margin-bottom: 16px;">
+                        ⚠️ To book any homestay here you must login first!
+                    </div>
+                <% } %>
+
+                <% if (message === 'auth') { %>
+                    <div style="background-color: #fff3cd; border: 1px solid #ffc107; color: #856404; padding: 10px 14px; border-radius: 8px; font-size: 14px; margin-bottom: 16px;">
+                        ⚠️ To add a homestay to favourites you must login first!
+                    </div>
+                <% } %>
 
                 <%- include('../partials/errors') %>
 
                 <!-- Email/Username -->
                 <div class="mb-4">
-                    <label class="text-sm text-gray-600 mb-1 block">Email / Username</label>
-                    <div class="flex items-center border border-gray-300 rounded-lg bg-white px-3">
+                    <label class="text-sm text-gray-600 mb-1 block font-medium">Email Address</label>
+                    <div class="flex items-center border border-gray-300 rounded-lg bg-white px-3 focus-within:border-teal-500">
                         <span class="text-gray-400 mr-2">✉️</span>
                         <input type="email" 
                             name="email" 
@@ -28,8 +40,8 @@
 
                 <!-- Password -->
                 <div class="mb-6">
-                    <label class="text-sm text-gray-600 mb-1 block">Password</label>
-                    <div class="flex items-center border border-gray-300 rounded-lg bg-white px-3">
+                    <label class="text-sm text-gray-600 mb-1 block font-medium">Password</label>
+                    <div class="flex items-center border border-gray-300 rounded-lg bg-white px-3 focus-within:border-teal-500">
                         <span class="text-gray-400 mr-2">🔒</span>
                         <input type="password" 
                             name="password" 
@@ -40,16 +52,16 @@
                 </div>
 
                 <!-- Submit -->
-                <button type="submit" class="w-full bg-red-500 text-white p-3 rounded-lg cursor-pointer hover:bg-red-600 transition duration-300 font-semibold text-lg">
+                <button type="submit" style="background-color: #0d9488;" class="w-full text-white p-3 rounded-lg cursor-pointer hover:bg-teal-700 transition duration-300 font-semibold text-lg">
                     Login →
                 </button>
 
                 <!-- Signup Link -->
                 <p class="text-center text-gray-500 text-sm mt-4">
-                    Don't have an account? <a href="/signup" class="text-red-500 font-semibold">Sign Up</a>
+                    Don't have an account? <a href="/signup" class="text-teal-600 font-semibold">Sign Up</a>
                 </p>
             </form>
         </div>
-    </div>
-</body>
-</html>
+    </main>
+
+    <%- include('../partials/footer') %>
