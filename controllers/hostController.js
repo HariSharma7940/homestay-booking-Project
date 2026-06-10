@@ -1,4 +1,5 @@
 const Homestay = require("../models/homestay");
+const Booking = require("../models/booking");
 const fs = require("fs");
 
 exports.getAddHome = (req, res, next) => {
@@ -143,4 +144,93 @@ exports.postDeleteHome = (req, res, next) => {
             console.log("Error While Deleting ", error);
             res.redirect('/host/host-home-list');
         });
+}
+
+exports.getHostBookings = async (req, res, next) => {
+    if (!req.session.user || req.session.user.userType !== 'host') {
+        return res.redirect("/");
+    }
+
+    try {
+        const myHomes = await Homestay.find({ hostId: req.session.user._id });
+        const myHomeIds = myHomes.map(home => home._id);
+
+        const bookings = await Booking.find({ homeId: { $in: myHomeIds } })
+            .populate('homeId')
+            .populate('userId')
+            .sort({ checkIn: -1 });
+
+        res.render('host/manage-bookings', {
+            bookings: bookings,
+            pageTitle: 'Manage Bookings',
+            currentPage: 'host-bookings',
+            isLoggedIn: req.isLoggedIn,
+            user: req.session.user,
+        });
+    } catch (err) {
+        console.log("Error in getHostBookings: ", err);
+        res.redirect("/");
+    }
+}
+
+exports.postApproveBooking = async (req, res, next) => {
+    if (!req.session.user || req.session.user.userType !== 'host') {
+        return res.redirect("/");
+    }
+
+    const bookingId = req.params.bookingId;
+    try {
+        const booking = await Booking.findById(bookingId).populate('homeId');
+        if (!booking) {
+            console.log("Booking not found");
+            return res.redirect("/host-bookings");
+        }
+
+        if (booking.homeId.hostId.toString() !== req.session.user._id.toString()) {
+            console.log("Unauthorized host access to booking");
+            return res.redirect("/host-bookings");
+        }
+
+        booking.status = 'Approved';
+        booking.approvedAt = new Date();
+        booking.approvedBy = req.session.user._id;
+
+        await booking.save();
+        res.redirect("/host-bookings");
+    } catch (err) {
+        console.log("Error in postApproveBooking: ", err);
+        res.redirect("/host-bookings");
+    }
+}
+
+exports.postRejectBooking = async (req, res, next) => {
+    if (!req.session.user || req.session.user.userType !== 'host') {
+        return res.redirect("/");
+    }
+
+    const bookingId = req.params.bookingId;
+    const { rejectionReason } = req.body;
+
+    try {
+        const booking = await Booking.findById(bookingId).populate('homeId');
+        if (!booking) {
+            console.log("Booking not found");
+            return res.redirect("/host-bookings");
+        }
+
+        if (booking.homeId.hostId.toString() !== req.session.user._id.toString()) {
+            console.log("Unauthorized host access to booking");
+            return res.redirect("/host-bookings");
+        }
+
+        booking.status = 'Rejected';
+        booking.rejectedAt = new Date();
+        booking.rejectionReason = rejectionReason ? rejectionReason.trim() : 'No reason provided';
+
+        await booking.save();
+        res.redirect("/host-bookings");
+    } catch (err) {
+        console.log("Error in postRejectBooking: ", err);
+        res.redirect("/host-bookings");
+    }
 }

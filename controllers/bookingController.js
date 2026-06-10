@@ -22,18 +22,42 @@ exports.getBookingForm = async (req, res, next) => {
 }
 
 exports.postBooking = async (req, res, next) => {
-    const { homeId, checkIn, checkOut, guests, totalPrice } = req.body;
+    const { homeId, checkIn, checkOut, guests, paymentMethod, advanceAmount } = req.body;
     const userId = req.session.user._id;
     
     try {
+        const home = await Homestay.findById(homeId);
+        if (!home) {
+            return res.redirect("/homes");
+        }
+
+        const checkInDate = new Date(checkIn);
+        const checkOutDate = new Date(checkOut);
+        
+        let nights = 0;
+        if (checkOutDate > checkInDate) {
+            const diffTime = Math.abs(checkOutDate - checkInDate);
+            nights = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        }
+
+        const guestsCount = parseInt(guests) || 1;
+        const calculatedTotalPrice = home.price * guestsCount * nights;
+        const parsedAdvanceAmount = parseFloat(advanceAmount) || 0;
+        const remainingAmount = calculatedTotalPrice - parsedAdvanceAmount;
+
         const booking = new Booking({
             homeId: homeId,
             userId: userId,
-            checkIn: checkIn,
-            checkOut: checkOut,
-            guests: guests,
-            totalPrice: totalPrice,
+            checkIn: checkInDate,
+            checkOut: checkOutDate,
+            guests: guestsCount,
+            totalPrice: calculatedTotalPrice,
+            paymentMethod: paymentMethod,
+            advanceAmount: parsedAdvanceAmount,
+            remainingAmount: remainingAmount >= 0 ? remainingAmount : 0,
+            status: 'Pending Owner Approval'
         });
+
         await booking.save();
         res.redirect("/bookings");
     } catch (err) {
@@ -62,7 +86,11 @@ exports.getMyBookings = async (req, res, next) => {
 exports.deleteBooking = async (req, res, next) => {
     const bookingId = req.params.bookingId;
     try {
-        await Booking.findByIdAndDelete(bookingId);
+        const booking = await Booking.findById(bookingId);
+        if (booking) {
+            booking.status = 'Cancelled';
+            await booking.save();
+        }
         res.redirect("/bookings");
     } catch (err) {
         console.log(err);

@@ -48,6 +48,15 @@
                 </li>
 
                 <li>
+                    <a href="/host-bookings" style="text-decoration: none; <%= currentPage === 'host-bookings' ? 'background-color: #0f766e;' : '' %>"
+                    onmouseover="this.style.backgroundColor='#0f766e'"
+                    onmouseout="this.style.backgroundColor='<%= currentPage === 'host-bookings' ? '#0f766e' : 'transparent' %>'"
+                    class="text-white font-semibold transition duration-300 px-3 py-2 rounded-lg flex items-center gap-1">
+                        📋 Manage Bookings
+                    </a>
+                </li>
+
+                <li>
                     <a href="/host/add-home" style="text-decoration: none; <%= currentPage === 'addHome' ? 'background-color: #0f766e;' : '' %>"
                     onmouseover="this.style.backgroundColor='#0f766e'"
                     onmouseout="this.style.backgroundColor='<%= currentPage === 'addHome' ? '#0f766e' : 'transparent' %>'"

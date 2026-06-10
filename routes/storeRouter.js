@@ -3,6 +3,7 @@ const storeRouter = express.Router()
 
 const storeController = require("../controllers/storeController")
 const bookingController = require("../controllers/bookingController")
+const hostController = require("../controllers/hostController")
 
 const isLoggedIn = (req, res, next) => {
     if (req.session.isLoggedIn) {
@@ -24,5 +25,10 @@ storeRouter.get("/homes/:homeId", storeController.getHomeDetails);
 storeRouter.post("/favourites", isLoggedIn, storeController.postAddToFavourite)
 storeRouter.post("/favourites/delete/:homeId", isLoggedIn, storeController.postRemoveFromFavourite)
 storeRouter.post("/bookings/delete/:bookingId", isLoggedIn, bookingController.deleteBooking)
+
+// Host bookings management routes
+storeRouter.get("/host-bookings", isLoggedIn, hostController.getHostBookings)
+storeRouter.post("/host-bookings/:bookingId/approve", isLoggedIn, hostController.postApproveBooking)
+storeRouter.post("/host-bookings/:bookingId/reject", isLoggedIn, hostController.postRejectBooking)
 
 module.exports = storeRouter;

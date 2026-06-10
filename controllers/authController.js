@@ -125,6 +125,7 @@ exports.postLogin = async (req, res, next) => {
             errors: ["User does not exist"],
             oldInput: {email},
             user: {},
+            message: null,
         });
     }
 
@@ -137,6 +138,7 @@ exports.postLogin = async (req, res, next) => {
             errors: ["Incorrect Password"],
             oldInput: {email},
             user: {},
+            message: null,
         });
     };
 

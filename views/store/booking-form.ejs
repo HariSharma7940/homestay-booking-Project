@@ -22,63 +22,191 @@
             </div>
 
             <!-- Booking Form -->
-            <form action="/bookings" method="POST">
+            <form action="/bookings" method="POST" id="bookingForm">
                 <input type="hidden" name="homeId" value="<%= home._id %>" />
-                <input type="hidden" name="totalPrice" id="totalPrice" value="0" />
 
-                <!-- Check In -->
-                <div style="margin-bottom: 1rem;">
-                    <label style="font-size: 14px; font-weight: 600; color: #374151; display: block; margin-bottom: 6px;">Check-in Date</label>
-                    <input type="date" name="checkIn" id="checkIn" required
-                        style="width: 100%; padding: 10px 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; box-sizing: border-box; outline-color: #0d9488;" />
-                </div>
-
-                <!-- Check Out -->
-                <div style="margin-bottom: 1rem;">
-                    <label style="font-size: 14px; font-weight: 600; color: #374151; display: block; margin-bottom: 6px;">Check-out Date</label>
-                    <input type="date" name="checkOut" id="checkOut" required
-                        style="width: 100%; padding: 10px 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; box-sizing: border-box; outline-color: #0d9488;" />
-                </div>
-
-                <!-- Guests -->
-                <div style="margin-bottom: 1.5rem;">
-                    <label style="font-size: 14px; font-weight: 600; color: #374151; display: block; margin-bottom: 6px;">Number of Guests (Max: <%= home.guests || 10 %>)</label>
-                    <input type="number" name="guests" id="guests" min="1" max="<%= home.guests || 10 %>" required
-                        style="width: 100%; padding: 10px 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; box-sizing: border-box; outline-color: #0d9488;" />
-                </div>
-
-                <!-- Total Price Display -->
-                <div style="background: #f9fafb; border-radius: 10px; padding: 1.25rem; margin-bottom: 1.5rem; border: 1px solid #f1f5f9;">
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-                        <p style="font-size: 14px; color: #6b7280; margin: 0;">Price per night</p>
-                        <p style="font-size: 14px; color: #1f2937; font-weight: 600; margin: 0;">RS <%= home.price %></p>
+                <!-- STEP 1: STAY DETAILS -->
+                <div id="step-1">
+                    <h2 style="font-size: 1.1rem; font-weight: 700; color: #0f766e; margin-top: 0; margin-bottom: 1.25rem;">Step 1: Stay Details</h2>
+                    
+                    <!-- Check In -->
+                    <div style="margin-bottom: 1rem;">
+                        <label style="font-size: 14px; font-weight: 600; color: #374151; display: block; margin-bottom: 6px;">Check-in Date</label>
+                        <input type="date" name="checkIn" id="checkIn" required
+                            style="width: 100%; padding: 10px 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; box-sizing: border-box; outline-color: #0d9488;" />
                     </div>
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-                        <p style="font-size: 14px; color: #6b7280; margin: 0;">Number of nights</p>
-                        <p style="font-size: 14px; color: #1f2937; font-weight: 600; margin: 0;" id="nightsDisplay">0</p>
+
+                    <!-- Check Out -->
+                    <div style="margin-bottom: 1rem;">
+                        <label style="font-size: 14px; font-weight: 600; color: #374151; display: block; margin-bottom: 6px;">Check-out Date</label>
+                        <input type="date" name="checkOut" id="checkOut" required
+                            style="width: 100%; padding: 10px 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; box-sizing: border-box; outline-color: #0d9488;" />
                     </div>
-                    <div style="display: flex; justify-content: space-between; border-top: 1px solid #e5e7eb; padding-top: 10px; margin-top: 8px;">
-                        <p style="font-size: 15px; font-weight: 700; color: #1f2937; margin: 0;">Total Price</p>
-                        <p style="font-size: 15px; font-weight: 700; color: #0d9488; margin: 0;" id="totalDisplay">RS 0</p>
+
+                    <!-- Guests -->
+                    <div style="margin-bottom: 1.5rem;">
+                        <label style="font-size: 14px; font-weight: 600; color: #374151; display: block; margin-bottom: 6px;">Number of Guests (Max: <%= home.guests || 10 %>)</label>
+                        <input type="number" name="guests" id="guests" min="1" max="<%= home.guests || 10 %>" value="1" required
+                            style="width: 100%; padding: 10px 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; box-sizing: border-box; outline-color: #0d9488;" />
+                    </div>
+
+                    <!-- Price Calculation Breakdown -->
+                    <div style="background: #f9fafb; border-radius: 10px; padding: 1.25rem; margin-bottom: 1.5rem; border: 1px solid #f1f5f9;">
+                        <h3 style="font-size: 13px; font-weight: 700; color: #4b5563; margin: 0 0 10px; text-transform: uppercase; letter-spacing: 0.5px;">Price Breakdown</h3>
+                        
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                            <p style="font-size: 14px; color: #6b7280; margin: 0;">Price per guest per night</p>
+                            <p style="font-size: 14px; color: #1f2937; font-weight: 600; margin: 0;">RS <%= home.price %></p>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                            <p style="font-size: 14px; color: #6b7280; margin: 0;">Number of guests</p>
+                            <p style="font-size: 14px; color: #1f2937; font-weight: 600; margin: 0;" id="guestsDisplay">1</p>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                            <p style="font-size: 14px; color: #6b7280; margin: 0;">Number of nights</p>
+                            <p style="font-size: 14px; color: #1f2937; font-weight: 600; margin: 0;" id="nightsDisplay">0</p>
+                        </div>
+                        
+                        <!-- Formula Display -->
+                        <div style="font-size: 12px; color: #0d9488; background-color: #f0fdfa; border-radius: 6px; padding: 6px 10px; margin-bottom: 8px; font-family: monospace; border: 1px solid #ccfbf1; text-align: center;" id="formulaDisplay">
+                            Formula: RS <%= home.price %> × 1 guests × 0 nights = RS 0
+                        </div>
+
+                        <div style="display: flex; justify-content: space-between; border-top: 1px solid #e5e7eb; padding-top: 10px; margin-top: 8px;">
+                            <p style="font-size: 15px; font-weight: 700; color: #1f2937; margin: 0;">Total Price</p>
+                            <p style="font-size: 15px; font-weight: 700; color: #0d9488; margin: 0;" id="totalDisplay">RS 0</p>
+                        </div>
+                    </div>
+
+                    <!-- Next Button -->
+                    <button type="button" id="goToStep2" style="width: 100%; background-color: #0d9488; color: white; padding: 12px 0; border: none; border-radius: 8px; font-size: 15px; font-weight: 600; cursor: pointer; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#0f766e'" onmouseout="this.style.backgroundColor='#0d9488'">
+                        Proceed to Payment Selection
+                    </button>
+                </div>
+
+                <!-- STEP 2: PAYMENT SIMULATION -->
+                <div id="step-2" style="display: none;">
+                    <h2 style="font-size: 1.1rem; font-weight: 700; color: #0f766e; margin-top: 0; margin-bottom: 1.25rem;">Step 2: Payment Simulation</h2>
+                    
+                    <p style="font-size: 13px; color: #6b7280; margin: 0 0 1.25rem; line-height: 1.4;">
+                        Select a payment gateway to simulate advance payment. Enter the amount you wish to pay in advance.
+                    </p>
+
+                    <!-- Payment Methods Grid -->
+                    <div style="margin-bottom: 1.5rem;">
+                        <label style="font-size: 14px; font-weight: 600; color: #374151; display: block; margin-bottom: 10px;">Select Payment Method</label>
+                        
+                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;">
+                            
+                            <!-- eSewa -->
+                            <label style="border: 2px solid #e5e7eb; border-radius: 10px; padding: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s;" id="label-esewa">
+                                <input type="radio" name="paymentMethod" value="eSewa" style="display: none;" id="radio-esewa" />
+                                <span style="font-size: 1.5rem; margin-bottom: 4px;">🟢</span>
+                                <span style="font-size: 12px; font-weight: 700; color: #4b5563;">eSewa</span>
+                            </label>
+
+                            <!-- Khalti -->
+                            <label style="border: 2px solid #e5e7eb; border-radius: 10px; padding: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s;" id="label-khalti">
+                                <input type="radio" name="paymentMethod" value="Khalti" style="display: none;" id="radio-khalti" />
+                                <span style="font-size: 1.5rem; margin-bottom: 4px;">🟣</span>
+                                <span style="font-size: 12px; font-weight: 700; color: #4b5563;">Khalti</span>
+                            </label>
+
+                            <!-- Mobile Banking -->
+                            <label style="border: 2px solid #e5e7eb; border-radius: 10px; padding: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s;" id="label-mob">
+                                <input type="radio" name="paymentMethod" value="Mobile Banking" style="display: none;" id="radio-mob" />
+                                <span style="font-size: 1.5rem; margin-bottom: 4px;">📱</span>
+                                <span style="font-size: 11px; font-weight: 700; color: #4b5563; text-align: center;">Mobile Banking</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Advance Payment Input -->
+                    <div style="margin-bottom: 1.5rem;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                            <label style="font-size: 14px; font-weight: 600; color: #374151;">Advance Amount (RS)</label>
+                            <span style="font-size: 12px; color: #0d9488; font-weight: 600;" id="maxAdvanceHint">Max: RS 0</span>
+                        </div>
+                        <input type="number" name="advanceAmount" id="advanceAmount" min="0" value="1000"
+                            style="width: 100%; padding: 10px 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; box-sizing: border-box; outline-color: #0d9488;" />
+                    </div>
+
+                    <!-- Live Remaining Amount display -->
+                    <div style="background: #f9fafb; border-radius: 10px; padding: 1rem; border: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                        <span style="font-size: 14px; font-weight: 600; color: #4b5563;">Estimated Remaining Balance:</span>
+                        <span style="font-size: 15px; font-weight: 700; color: #ef4444;" id="liveRemaining">RS 0</span>
+                    </div>
+
+                    <!-- Navigation Buttons -->
+                    <div style="display: flex; gap: 10px;">
+                        <button type="button" id="backToStep1" style="flex: 1; border: 1.5px solid #d1d5db; background-color: white; color: #4b5563; padding: 12px 0; border-radius: 8px; font-size: 15px; font-weight: 600; cursor: pointer; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#f9fafb'" onmouseout="this.style.backgroundColor='white'">
+                            Back
+                        </button>
+                        <button type="button" id="goToStep3" style="flex: 1; background-color: #0d9488; color: white; padding: 12px 0; border: none; border-radius: 8px; font-size: 15px; font-weight: 600; cursor: pointer; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#0f766e'" onmouseout="this.style.backgroundColor='#0d9488'">
+                            Proceed to Payment
+                        </button>
                     </div>
                 </div>
 
-                <!-- Submit Button -->
-                <button type="submit" style="width: 100%; background-color: #0d9488; color: white; padding: 12px 0; border: none; border-radius: 8px; font-size: 15px; font-weight: 600; cursor: pointer; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#0f766e'" onmouseout="this.style.backgroundColor='#0d9488'">
-                    Confirm Booking
-                </button>
+                <!-- STEP 3: CONFIRMATION SUMMARY -->
+                <div id="step-3" style="display: none;">
+                    <h2 style="font-size: 1.1rem; font-weight: 700; color: #0f766e; margin-top: 0; margin-bottom: 1.25rem; text-align: center;">Booking Summary</h2>
+                    
+                    <div style="background: #f0fdfa; border: 1px solid #ccfbf1; border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem;">
+                        
+                        <table style="width: 100%; border-collapse: collapse; font-size: 14px; color: #374151;">
+                            <tr style="border-bottom: 1px solid #e5e7eb;">
+                                <td style="padding: 8px 0; font-weight: 600; color: #6b7280;">Selected Payment Method:</td>
+                                <td style="padding: 8px 0; text-align: right; font-weight: 700; color: #0f766e;" id="summaryPaymentMethod">-</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid #e5e7eb;">
+                                <td style="padding: 8px 0; font-weight: 600; color: #6b7280;">Advance Paid:</td>
+                                <td style="padding: 8px 0; text-align: right; font-weight: 700; color: #111827;" id="summaryAdvancePaid">RS 0</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid #e5e7eb;">
+                                <td style="padding: 8px 0; font-weight: 600; color: #6b7280;">Remaining Amount:</td>
+                                <td style="padding: 8px 0; text-align: right; font-weight: 700; color: #ef4444;" id="summaryRemainingAmount">RS 0</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid #e5e7eb;">
+                                <td style="padding: 8px 0; font-weight: 600; color: #6b7280;">Check-In:</td>
+                                <td style="padding: 8px 0; text-align: right; font-weight: 600;" id="summaryCheckIn">-</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid #e5e7eb;">
+                                <td style="padding: 8px 0; font-weight: 600; color: #6b7280;">Check-Out:</td>
+                                <td style="padding: 8px 0; text-align: right; font-weight: 600;" id="summaryCheckOut">-</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 8px 0; font-weight: 600; color: #6b7280;">Guests:</td>
+                                <td style="padding: 8px 0; text-align: right; font-weight: 600;" id="summaryGuests">0</td>
+                            </tr>
+                        </table>
+
+                    </div>
+
+                    <!-- Final Action Buttons -->
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                        <button type="submit" style="width: 100%; background-color: #0d9488; color: white; padding: 12px 0; border: none; border-radius: 8px; font-size: 15px; font-weight: 600; cursor: pointer; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#0f766e'" onmouseout="this.style.backgroundColor='#0d9488'">
+                            Confirm Booking
+                        </button>
+                        <button type="button" id="cancelBooking" style="width: 100%; border: 1.5px solid #ef4444; background-color: #fef2f2; color: #ef4444; padding: 12px 0; border-radius: 8px; font-size: 15px; font-weight: 600; cursor: pointer; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#fee2e2'" onmouseout="this.style.backgroundColor='#fef2f2'">
+                            Cancel
+                        </button>
+                    </div>
+                </div>
             </form>
 
         </div>
     </main>
 
-    <!-- Total Price Calculator -->
+    <!-- Total Price Calculator & Wizard Script -->
     <script>
-        const pricePerNight = <%= home.price %>;
+        const pricePerGuest = <%= home.price %>;
+        let totalPriceVal = 0;
 
         function calculateTotal() {
             const checkInVal = document.getElementById('checkIn').value;
             const checkOutVal = document.getElementById('checkOut').value;
+            const guestsVal = parseInt(document.getElementById('guests').value) || 1;
 
             if (checkInVal && checkOutVal) {
                 const checkIn = new Date(checkInVal);
@@ -87,21 +215,154 @@
                 if (checkOut > checkIn) {
                     const diffTime = Math.abs(checkOut - checkIn);
                     const nights = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-                    const total = nights * pricePerNight;
+                    const total = pricePerGuest * guestsVal * nights;
 
                     document.getElementById('nightsDisplay').textContent = nights;
+                    document.getElementById('guestsDisplay').textContent = guestsVal;
                     document.getElementById('totalDisplay').textContent = 'RS ' + total;
-                    document.getElementById('totalPrice').value = total;
-                } else {
-                    document.getElementById('nightsDisplay').textContent = '0';
-                    document.getElementById('totalDisplay').textContent = 'RS 0';
-                    document.getElementById('totalPrice').value = '0';
+                    
+                    document.getElementById('formulaDisplay').textContent = 
+                        `Formula: RS ${pricePerGuest} × ${guestsVal} guest(s) × ${nights} night(s) = RS ${total}`;
+
+                    totalPriceVal = total;
+                    document.getElementById('maxAdvanceHint').textContent = 'Max: RS ' + total;
+                    document.getElementById('advanceAmount').max = total;
+                    
+                    updateRemaining();
+                    return total;
                 }
             }
+            
+            document.getElementById('nightsDisplay').textContent = '0';
+            document.getElementById('guestsDisplay').textContent = guestsVal;
+            document.getElementById('totalDisplay').textContent = 'RS 0';
+            document.getElementById('formulaDisplay').textContent = 
+                `Formula: RS ${pricePerGuest} × ${guestsVal} guest(s) × 0 night(s) = RS 0`;
+            totalPriceVal = 0;
+            document.getElementById('maxAdvanceHint').textContent = 'Max: RS 0';
+            document.getElementById('advanceAmount').max = 0;
+            updateRemaining();
+            return 0;
+        }
+
+        function updateRemaining() {
+            const advance = parseFloat(document.getElementById('advanceAmount').value) || 0;
+            const remaining = totalPriceVal - advance;
+            document.getElementById('liveRemaining').textContent = 'RS ' + (remaining >= 0 ? remaining : 0);
         }
 
         document.getElementById('checkIn').addEventListener('change', calculateTotal);
         document.getElementById('checkOut').addEventListener('change', calculateTotal);
+        document.getElementById('guests').addEventListener('input', calculateTotal);
+        document.getElementById('advanceAmount').addEventListener('input', updateRemaining);
+
+        // Set min date to today for check-in
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('checkIn').min = today;
+        document.getElementById('checkOut').min = today;
+
+        // Payment Method selection style toggles
+        const radios = document.querySelectorAll('input[name="paymentMethod"]');
+        radios.forEach(radio => {
+            radio.addEventListener('change', () => {
+                // reset labels
+                document.getElementById('label-esewa').style.borderColor = '#e5e7eb';
+                document.getElementById('label-esewa').style.backgroundColor = 'transparent';
+                document.getElementById('label-khalti').style.borderColor = '#e5e7eb';
+                document.getElementById('label-khalti').style.backgroundColor = 'transparent';
+                document.getElementById('label-mob').style.borderColor = '#e5e7eb';
+                document.getElementById('label-mob').style.backgroundColor = 'transparent';
+
+                // highlight selected
+                if (radio.checked) {
+                    let labelId = '';
+                    if (radio.value === 'eSewa') labelId = 'label-esewa';
+                    else if (radio.value === 'Khalti') labelId = 'label-khalti';
+                    else if (radio.value === 'Mobile Banking') labelId = 'label-mob';
+
+                    const label = document.getElementById(labelId);
+                    label.style.borderColor = '#0d9488';
+                    label.style.backgroundColor = '#f0fdfa';
+                }
+            });
+        });
+
+        // Step Navigation
+        document.getElementById('goToStep2').addEventListener('click', () => {
+            const checkInVal = document.getElementById('checkIn').value;
+            const checkOutVal = document.getElementById('checkOut').value;
+            const guestsVal = parseInt(document.getElementById('guests').value) || 0;
+
+            if (!checkInVal || !checkOutVal) {
+                alert('Please select check-in and check-out dates.');
+                return;
+            }
+            if (new Date(checkOutVal) <= new Date(checkInVal)) {
+                alert('Check-out date must be after check-in date.');
+                return;
+            }
+            if (guestsVal <= 0 || guestsVal > <%= home.guests || 10 %>) {
+                alert('Please enter a valid guest count (1 to <%= home.guests || 10 %>).');
+                return;
+            }
+
+            calculateTotal();
+            // Default advance amount set to total or 1000, whichever is smaller
+            const advInput = document.getElementById('advanceAmount');
+            if (parseFloat(advInput.value) > totalPriceVal || advInput.value == '1000') {
+                advInput.value = Math.min(1000, totalPriceVal);
+            }
+            updateRemaining();
+
+            document.getElementById('step-1').style.display = 'none';
+            document.getElementById('step-2').style.display = 'block';
+        });
+
+        document.getElementById('backToStep1').addEventListener('click', () => {
+            document.getElementById('step-2').style.display = 'none';
+            document.getElementById('step-1').style.display = 'block';
+        });
+
+        document.getElementById('goToStep3').addEventListener('click', () => {
+            // Check payment method selection
+            let selectedMethod = '';
+            radios.forEach(r => {
+                if (r.checked) selectedMethod = r.value;
+            });
+
+            if (!selectedMethod) {
+                alert('Please select a payment method.');
+                return;
+            }
+
+            const advanceAmountVal = parseFloat(document.getElementById('advanceAmount').value);
+            if (isNaN(advanceAmountVal) || advanceAmountVal < 0) {
+                alert('Please enter a valid advance payment amount (cannot be negative).');
+                return;
+            }
+            if (advanceAmountVal > totalPriceVal) {
+                alert('Advance payment amount cannot exceed the total price of RS ' + totalPriceVal + '.');
+                return;
+            }
+
+            // Fill Step 3 summary details
+            document.getElementById('summaryPaymentMethod').textContent = selectedMethod;
+            document.getElementById('summaryAdvancePaid').textContent = 'RS ' + advanceAmountVal;
+            const remaining = totalPriceVal - advanceAmountVal;
+            document.getElementById('summaryRemainingAmount').textContent = 'RS ' + (remaining >= 0 ? remaining : 0);
+            document.getElementById('summaryCheckIn').textContent = new Date(document.getElementById('checkIn').value).toDateString();
+            document.getElementById('summaryCheckOut').textContent = new Date(document.getElementById('checkOut').value).toDateString();
+            document.getElementById('summaryGuests').textContent = document.getElementById('guests').value;
+
+            document.getElementById('step-2').style.display = 'none';
+            document.getElementById('step-3').style.display = 'block';
+        });
+
+        document.getElementById('cancelBooking').addEventListener('click', () => {
+            // Cancel returns to Step 1
+            document.getElementById('step-3').style.display = 'none';
+            document.getElementById('step-1').style.display = 'block';
+        });
     </script>
 
     <%- include('../partials/footer') %>

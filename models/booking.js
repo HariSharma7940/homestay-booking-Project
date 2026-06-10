@@ -27,6 +27,38 @@ const bookingSchema = mongoose.Schema({
         type: Number,
         required: true
     },
+    paymentMethod: {
+        type: String,
+        required: true,
+        enum: ['eSewa', 'Khalti', 'Mobile Banking']
+    },
+    advanceAmount: {
+        type: Number,
+        required: true
+    },
+    remainingAmount: {
+        type: Number,
+        required: true
+    },
+    status: {
+        type: String,
+        required: true,
+        enum: ['Pending Owner Approval', 'Approved', 'Rejected', 'Cancelled'],
+        default: 'Pending Owner Approval'
+    },
+    approvedAt: {
+        type: Date
+    },
+    approvedBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'user'
+    },
+    rejectedAt: {
+        type: Date
+    },
+    rejectionReason: {
+        type: String
+    }
 });
 
 module.exports = mongoose.model('Booking', bookingSchema);

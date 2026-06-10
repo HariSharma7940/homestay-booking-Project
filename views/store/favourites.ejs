@@ -39,12 +39,17 @@
                         </div>
                     </div>
 
-                    <!-- Remove Form -->
-                    <form action="/favourites/delete/<%= home._id %>" method="POST" style="margin: 0; padding: 0 1rem 1rem;">
-                        <button type="submit" style="width: 100%; border: 1.5px solid #ef4444; color: #ef4444; background-color: #fef2f2; font-weight: 600; font-size: 13px; padding: 8px 0; border-radius: 8px; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.backgroundColor='#fee2e2'" onmouseout="this.style.backgroundColor='#fef2f2'">
-                            ❌ Remove from Favourites
-                        </button>
-                    </form>
+                    <!-- Action Buttons -->
+                    <div style="display: flex; flex-direction: column; gap: 8px; padding: 0 1rem 1rem;">
+                        <a href="/homes/<%= home._id %>/book" style="display: block; text-align: center; background-color: #0d9488; color: white; font-weight: 600; font-size: 13px; padding: 8px 0; border-radius: 8px; text-decoration: none; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#0f766e'" onmouseout="this.style.backgroundColor='#0d9488'">
+                            📅 Book Now
+                        </a>
+                        <form action="/favourites/delete/<%= home._id %>" method="POST" style="margin: 0; width: 100%;">
+                            <button type="submit" style="width: 100%; border: 1.5px solid #ef4444; color: #ef4444; background-color: #fef2f2; font-weight: 600; font-size: 13px; padding: 8px 0; border-radius: 8px; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.backgroundColor='#fee2e2'" onmouseout="this.style.backgroundColor='#fef2f2'">
+                                ❌ Remove from Favourites
+                            </button>
+                        </form>
+                    </div>
                 </div>
                 <% }) %>
 
